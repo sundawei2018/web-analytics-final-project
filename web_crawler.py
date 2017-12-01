@@ -4,6 +4,8 @@ Created on Tue Oct 24 18:05:55 2017
 
 @author: dsun2
 """
+# this script contains a web crawler which can scape customers' reviews from bestbuy.com 
+# and save into a file
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
