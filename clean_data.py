@@ -28,23 +28,13 @@ def clean_review(tokens):
     return review   
 
 def save(reviews):
-    with open("clean_iphone8_review.csv", "wb", newline='') as f:
+    with open("clean_iphone8_review.csv", "wb") as f:
         writer = csv.writer(f, dialect = 'excel')
         writer.writerows(reviews)
     f.close()
 
-def remove_empty_lines(input_file, output_line):
-    input = open(input_file, 'rb')
-    output = open(output_line, 'wb')
-    writer = csv.writer(output)
-    for row in csv.reader(input):
-        if row:
-            writer.writerow(row)
-    input.close()
-    output.close()
-
 if __name__ == "__main__":
-    f = open("raw_iphone8_review.csv", "rt")
+    f = open("raw_iphone8_review.csv", "rb")
     reader = csv.reader(f)
     reviews = []
     for utf8_row in reader:
@@ -53,5 +43,4 @@ if __name__ == "__main__":
         reviews.append(review)
     f.close()
     save(reviews)
-#    remove_empty_lines('clean_iphone8_review.csv', 'new_iphone8_review.csv')
     

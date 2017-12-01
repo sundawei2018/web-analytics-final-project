@@ -62,11 +62,11 @@ def get_review_tokens(review):
             ]    
     return tokens
 
-f = open("raw_iphone8_review.csv", "rb")
+f = open("new_test.csv", "rb")
 reader = csv.reader(f)
 
 lines = [line for line in reader]
-print (get_review_tokens(lines[0][1]))
+print (len(lines))
 #tmp = " ".join(get_doc_tokens(lines[4][1]))
 #print (tmp)
 #f.close()
