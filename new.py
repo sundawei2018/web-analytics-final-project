@@ -4,75 +4,44 @@ Created on Tue Nov 28 22:13:30 2017
 
 @author: dsun2
 """
+"""
+1 battery / power
+2 camera / lens / picture / phote
+3 screen / display
+4 system / operation
+5 others
 
+"""
 #import os
 import csv
-#import nltk, re, string
-#from nltk.corpus import stopwords
-#
-#stop_words = ['a', 'an', 'the', 'and', 'or']
-#print (stop_words)
-#
-#rows = ["asdf", "asdfasd"]
-#
-#with open("foo.csv", "w") as f:
-#    writer = csv.writer(f, dialect="excel")
-#    writer.writerows(rows)
 
-#l = [[1, 2], [2, 3], [4, 5]]
-#
-#out = open('out.csv', 'w')
-#for row in l:
-#    for column in row:
-#        out.write('%d;' % column)
-#    out.write('\n')
-#out.close()
+lines = []
+with open("clean_iPhone8_review.csv", "rb") as f:
+    reader = csv.reader(f, dialect = 'excel')
+    lines = [row for row in reader]
 
-#def get_doc_tokens(doc):
-#    tokens=[token.strip() \
-#            for token in nltk.word_tokenize(doc.lower()) \
-#            if token.strip() not in string.punctuation and \
-#            token.strip() not in stop_words and \
-#            token.strip() if not token.isdigit() and \
-#            token.strip() if not token.startswith('\'')
-#            ]    
-#    return tokens
-    
-
-# docs_tokens=[get_doc_tokens(doc) for doc in docs]
-#print (docs_tokens[0])
-#
-#tmp = " ".join(docs_tokens[0])
-#print (tmp)   
-
-import csv
-import nltk, string
-stop_words = ['a', 'an', 'the', 'and', 'or']
-
-def get_review_tokens(review):
-    # unigram tokenization pattern
-    pattern = r'\w+[\-]*\w+'                          
-    # get unigrams
-    tokens=[token.strip() \
-            for token in nltk.regexp_tokenize(review.lower(), pattern) \
-            if token.strip() not in string.punctuation and \
-            token.strip() not in stop_words and \
-            token.strip() if not token.isdigit() and \
-            token.strip() if not token.startswith('\'')
-            ]    
-    return tokens
-
-f = open("new_test.csv", "rb")
-reader = csv.reader(f)
-
-lines = [line for line in reader]
 print (len(lines))
-#tmp = " ".join(get_doc_tokens(lines[4][1]))
-#print (tmp)
-#f.close()
 
-#print (type(lines[3]))
-#print (len(lines))
-
-#    review = [unicode_row[0], clean_review(unicode_row[1])]
-#    reviews.append(review)
+iphone_battery_arr = []
+iphone_camera_arr = []
+iphone_screen_arr = []
+iphone_processor_arr = []
+others = []
+for idx, line in enumerate(lines):
+    if "processor" in line[1] or "system" in line[1] or "operating" in line[1] or "processors" in line[1]:
+        iphone_processor_arr.append(idx)
+    elif "battery" in line[1]:
+        iphone_battery_arr.append(idx)
+    elif "camera" in line[1] or "picture" in line[1]:
+        iphone_camera_arr.append(idx)
+    elif "screen" in line[1] or "display" in line[1]:
+        iphone_screen_arr.append(idx)
+    
+    else:
+        others.append(idx)
+        
+print ("battery ", iphone_battery_arr[0:33], len(iphone_battery_arr))
+print ("camera: " , iphone_camera_arr[0:33], len(iphone_camera_arr))
+print ("screen: ", iphone_screen_arr[0:33], len(iphone_screen_arr))
+print ("process: ", iphone_processor_arr[0:33], len(iphone_processor_arr))
+print ("others: ", others[0:33])

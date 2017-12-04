@@ -29,11 +29,11 @@ if __name__ == "__main__":
 #        
 #        print (line)
         
-    f = open('raw_iphone8_review.csv', 'rb')
-    reader = csv.reader(f)
-    for utf8_row in reader:
-        unicode_row = [x.decode('utf8') for x in utf8_row]
-        print (clean_review(unicode_row[1]))
+#    f = open('raw_iphone8_review.csv', 'rb')
+#    reader = csv.reader(f)
+#    for utf8_row in reader:
+#        unicode_row = [x.decode('utf8') for x in utf8_row]
+#        print (clean_review(unicode_row[1]))
 #    f.close()
 #    reviews = []
 #    i = 0
@@ -43,3 +43,9 @@ if __name__ == "__main__":
 #        rating = line[0]
 #        review = get_doc_tokens(line[1])
 #        print (review)
+    
+    with open("training_data.csv", "rb") as f:
+        reader = csv.reader(f, dialect = 'excel')
+        rows = [row for row in reader]
+        
+    print (rows[0][0])
