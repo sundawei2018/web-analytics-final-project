@@ -12,6 +12,7 @@ Created on Fri Dec 01 17:00:07 2017
 4 system / operation
 5 others
 
+[battery, camera, others, processor, screen]
 """
 
 # this script can label reivews with corresponding features and create a training set
@@ -96,7 +97,7 @@ if __name__ == "__main__":
             writer.writerow(('others', iPhone_reviews[idx][1]))
             
         for idx in battery_note8_idx:
-            writer.writerow(('camera', Note8_reviews[idx][1]))
+            writer.writerow(('battery', Note8_reviews[idx][1]))
         for idx in camera_note8_idx:
             writer.writerow(('camera', Note8_reviews[idx][1]))
         for idx in screen_note8_idx:
@@ -107,7 +108,7 @@ if __name__ == "__main__":
             writer.writerow(('others', Note8_reviews[idx][1])) 
             
         for idx in battery_s8_idx:
-            writer.writerow(('camera', S8_reviews[idx][1]))
+            writer.writerow(('battery', S8_reviews[idx][1]))
         for idx in camera_s8_idx:
             writer.writerow(('camera', S8_reviews[idx][1]))
         for idx in screen_s8_idx:
