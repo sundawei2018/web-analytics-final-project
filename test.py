@@ -44,8 +44,16 @@ if __name__ == "__main__":
 #        review = get_doc_tokens(line[1])
 #        print (review)
     
-    with open("training_data.csv", "rb") as f:
+#    with open("training_data.csv", "rb") as f:
+#        reader = csv.reader(f, dialect = 'excel')
+#        rows = [row for row in reader]
+#        
+#    print (rows[0][0])
+#    l = [0,0,0,1]
+#    idx = l[3]
+#    print (idx)
+    with open("clean_iPhone8_review.csv", "r") as f:
         reader = csv.reader(f, dialect = 'excel')
-        rows = [row for row in reader]
-        
-    print (rows[0][0])
+        iphone_reviews = [line[1] for line in reader]
+    f.close()
+    
