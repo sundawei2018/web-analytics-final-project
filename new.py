@@ -16,7 +16,7 @@ Created on Tue Nov 28 22:13:30 2017
 import csv
 
 lines = []
-with open("clean_S8_review.csv", "rb") as f:
+with open("clean_Note8_review.csv", "rb") as f:
     reader = csv.reader(f, dialect = 'excel')
     lines = [row for row in reader]
 
@@ -40,8 +40,8 @@ for idx, line in enumerate(lines):
     else:
         others.append(idx)
         
-print ("battery ", iphone_battery_arr[0:50], len(iphone_battery_arr))
-print ("camera: " , iphone_camera_arr[0:50], len(iphone_camera_arr))
-print ("screen: ", iphone_screen_arr[0:50], len(iphone_screen_arr))
+print ("battery ", iphone_battery_arr[0:100], len(iphone_battery_arr))
+print ("camera: " , iphone_camera_arr[0:100], len(iphone_camera_arr))
+print ("screen: ", iphone_screen_arr[0:100], len(iphone_screen_arr))
 print ("process: ", iphone_processor_arr[0:50], len(iphone_processor_arr))
-print ("others: ", others[0:50])
+print ("others: ", others[0:100])

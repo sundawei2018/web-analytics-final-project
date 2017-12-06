@@ -133,14 +133,14 @@ if __name__ == "__main__":
     Y_pred=np.where(Y_pred>0.5,1,0)
     print(classification_report(Y_test, Y_pred, target_names=mlb.classes_))
     
-    with open("clean_iPhone8_review.csv", "r") as f:
+    with open("training_data.csv", "r") as f:
         reader = csv.reader(f, dialect = 'excel')
         iphone_reviews = [line[1] for line in reader]
     f.close()
     
-    tokenizer.fit_on_texts(iphone_reviews)
+    tokenizer.fit_on_texts(iphone_reviews[0:10])
     # convert each document to a list of word index as a sequence
-    sequences = tokenizer.texts_to_sequences(iphone_reviews)
+    sequences = tokenizer.texts_to_sequences(iphone_reviews[0:10])
     # get the mapping between words to word index
     
     # pad all sequences into the same length (the longest)
@@ -197,4 +197,100 @@ if __name__ == "__main__":
     ss = sid.polarity_scores(text)
     print ("screen", ss)
     
-    print (text)
+    
+    
+    
+    
+    
+    
+    
+    BEST_MODEL_FILEPATH = 'wv_model'
+
+    sentences=[ [token.strip(string.punctuation).strip() \
+             for token in nltk.word_tokenize(doc) \
+                 if token not in string.punctuation and \
+                 len(token.strip(string.punctuation).strip())>=2]\
+             for doc in reviews]
+#    print(sentences[0:2])
+    
+    # print out tracking information
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
+                        level=logging.INFO)
+    EMBEDDING_DIM=200
+    # min_count: words with total frequency lower than this are ignored
+    # size: the dimension of word vector
+    # window: is the maximum distance 
+    #         between the current and predicted word 
+    #         within a sentence (i.e. the length of ngrams)
+    # workers: # of parallel threads in training
+    # for other parameters, check https://radimrehurek.com/gensim/models/word2vec.html
+    wv_model = word2vec.Word2Vec(sentences, min_count=5, \
+                                 size=EMBEDDING_DIM, window=5, workers=4 )
+    
+    
+    EMBEDDING_DIM=200
+    MAX_NB_WORDS=8000
+    
+    tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
+
+    # tokenizer.word_index provides the mapping 
+    # between a word and word index for all words
+#    voc = tokenizer.word_index
+#    NUM_WORDS = min(MAX_NB_WORDS, len(voc))
+    NUM_WORDS = MAX_NB_WORDS
+    # "+1" is for padding symbol
+    embedding_matrix = np.zeros((NUM_WORDS+1, EMBEDDING_DIM))
+    
+    for word, i in tokenizer.word_index.items():
+        # if word_index is above the max number of words, ignore it
+        if i >= NUM_WORDS:
+            continue
+        if word in wv_model.wv:
+            embedding_matrix[i]=wv_model.wv[word]
+            
+    mlb = MultiLabelBinarizer()
+    Y = mlb.fit_transform(labels)            
+
+    # set the number of output units
+    # as the number of classes
+    NUM_OUTPUT_UNITS=len(mlb.classes_)
+    
+    EMBEDDING_DIM=100
+    FILTER_SIZES=[2,3,4]
+    
+    BTACH_SIZE = 32
+    NUM_EPOCHES = 100
+    
+    MAX_NB_WORDS=8000
+    # documents are quite long in the dataset
+    MAX_DOC_LEN=100
+    tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
+    tokenizer.fit_on_texts(reviews)
+    # convert each document to a list of word index as a sequence
+    sequences = tokenizer.texts_to_sequences(reviews)
+    # get the mapping between words to word index
+    
+    # pad all sequences into the same length (the longest)
+    padded_sequences = pad_sequences(sequences, \
+                                     maxlen=MAX_DOC_LEN, \
+                                     padding='post', truncating='post')
+    # With well trained word vectors, sample size can be reduced
+    # Assume we only have 500 labeled data
+    # split dataset into train (70%) and test sets (30%)
+    X_train, X_test, Y_train, Y_test = train_test_split(\
+                    padded_sequences[0:500], Y[0:500], \
+                    test_size=0.3, random_state=0)
+    
+    # create the model with embedding matrix
+    model=cnn_model(FILTER_SIZES, MAX_NB_WORDS, \
+                    MAX_DOC_LEN, NUM_OUTPUT_UNITS, \
+                    PRETRAINED_WORD_VECTOR=embedding_matrix)
+    
+    earlyStopping=EarlyStopping(monitor='val_loss', patience=0, verbose=2, mode='min')
+    checkpoint = ModelCheckpoint(BEST_MODEL_FILEPATH, monitor='val_acc', \
+                                 verbose=2, save_best_only=True, mode='max')
+        
+    training=model.fit(X_train, Y_train, \
+              batch_size=BTACH_SIZE, epochs=NUM_EPOCHES, \
+              callbacks=[earlyStopping, checkpoint],\
+              validation_data=[X_test, Y_test], verbose=2)
